@@ -81,12 +81,12 @@ _prompt_eriner_status() {
   local segment=
   if (( RETVAL )) segment+=' %F{red}✘'
   if (( EUID == 0 )) segment+=' %F{yellow}⚡'
-  if (( $(jobs -l | wc -l) )) segment+=' %F{cyan}⚙'
+  if (( ${#jobstates} )) segment+=' %F{cyan}⚙'
   if (( RANGER_LEVEL )) segment+=' %F{cyan}r'
   if [[ -n ${VIRTUAL_ENV} ]] segment+=" %F{cyan}${VIRTUAL_ENV:t}"
   if [[ -n ${SSH_TTY} ]] segment+=" %F{%(!.yellow.default)}%n@%m"
   if [[ -n ${segment} ]]; then
-    _prompt_eriner_segment ${STATUS_COLOR} "${segment} "
+    _prompt_eriner_segment ${STATUS_COLOR} ${segment}' '
   fi
 }
 
@@ -94,20 +94,19 @@ _prompt_eriner_status() {
 _prompt_eriner_pwd() {
   local current_dir
   prompt-pwd current_dir
-  _prompt_eriner_standout_segment ${PWD_COLOR} " ${current_dir} "
+  _prompt_eriner_standout_segment ${PWD_COLOR} ' '${current_dir}' '
 }
 
 # Git: branch/detached head, dirty status.
 _prompt_eriner_git() {
   if [[ -n ${git_info} ]]; then
     local git_color
-    local git_dirty=${(e)git_info[dirty]}
-    if [[ -n ${git_dirty} ]]; then
+    if [[ -n ${(e)git_info[dirty]} ]]; then
       git_color=${DIRTY_COLOR}
     else
       git_color=${CLEAN_COLOR}
     fi
-    _prompt_eriner_standout_segment ${git_color} " ${(e)git_info[prompt]}${git_dirty} "
+    _prompt_eriner_standout_segment ${git_color} ' '${(e)git_info[prompt]}' '
   fi
 }
 
@@ -129,7 +128,7 @@ if (( ${+functions[git-info]} )); then
   zstyle ':zim:git-info:action' format ' (%s)'
   zstyle ':zim:git-info:dirty' format ' ±'
   zstyle ':zim:git-info:keys' format \
-      'prompt' '%b%c%s' \
+      'prompt' '%b%c%s%D' \
       'dirty' '%D'
 
   autoload -Uz add-zsh-hook && add-zsh-hook precmd git-info
