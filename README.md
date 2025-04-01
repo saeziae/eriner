@@ -1,3 +1,11 @@
+A pride fork of A Zim fork of the Powerline-inspired agnoster prompt theme. 
+
+```
+zmodule saeziae/eriner
+```
+
+---
+
 eriner
 ======
 
